@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+[Bb]in/
+[Oo]bj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+.idea/
+
+# Environment Variables & Credentials
+.env
+*.env.local
+*.env.*.local
+!*.env.example
+
+# Sensitive credentials & keys
+*.pfx
+*.p12
+*.pem
+*.key
+*.secret
+credentials.json
+id_rsa
+id_ecdsa
+id_ed25519
+
+# Build artifacts & package outputs
+*.nupkg
+*.snupkg
+*.log
+TestResults/
+BenchmarkDotNet.Artifacts/
+
+# Ephemeral sandbox and runtime test directories
+/tmp/mxc_agent_sandboxes/
+/tmp/mxc_security_test_*/
+sandbox_storage/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini

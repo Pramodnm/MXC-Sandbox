@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mxc-maf-agent-service
+  namespace: ai-agents
+  labels:
+    app: mxc-maf-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mxc-maf-agent
+  template:
+    metadata:
+      labels:
+        app: mxc-maf-agent
+    spec:
+      containers:
+      - name: agent-runner
+        image: mxc-maf-agent:latest
+        imagePullPolicy: IfNotPresent
+
+        # Linux Security Context for Unprivileged Bubblewrap Sandboxing
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+              - SYS_ADMIN # Needed for user/mount namespace manipulation
+              - NET_ADMIN # Needed for private network namespace iptables rules
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: Unconfined
+
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "2Gi"
+          limits:
+            cpu: "4000m"
+            memory: "8Gi"
+
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-credentials
+              key: api-key
+              optional: true
+
+        # Ephemeral scratch memory volume for sandbox sessions
+        volumeMounts:
+        - name: sandbox-tmpfs
+          mountPath: /tmp/mxc_agent_sandboxes
+
+      volumes:
+      - name: sandbox-tmpfs
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
